@@ -43,22 +43,61 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: GridView.builder(
                       itemCount: 31,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 7,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                          ),
                       itemBuilder: (context, index) {
                         final day = index + 1;
-                        final MoodType? dayMood = MockMoodData.monthlyMoods[day];
-                    
-                        return MoodPixelWidget(
-                          day: day,
-                          mood: dayMood,
-                        );
+                        final MoodType? dayMood =
+                            MockMoodData.monthlyMoods[day];
+
+                        return MoodPixelWidget(day: day, mood: dayMood);
                       },
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 10),
+
+                  // Mood selector Panel
+                  const Text(
+                    'How are you to day?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: MoodType.values.map((mood) {
+                      return GestureDetector(
+                        onTap: () {
+                          print('You selected: ${mood.name}');
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColors.getColorForMood(mood),
+                            shape: BoxShape.circle,
+                            boxShadow:[
+                              BoxShadow(
+                                color: AppColors.getColorForMood(mood).withOpacity(0.3),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              )
+                            ]
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

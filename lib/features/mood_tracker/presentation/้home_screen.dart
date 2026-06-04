@@ -66,15 +66,18 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 10),
 
                   // Mood selector Panel
-                  const Text(
-                    'How are you to day?',
-                    style: TextStyle(
+                  Text(
+                    ref.watch(selectedDayProvider) == DateTime.now().day
+                        ? 'How are you today? (Today)'
+                        : 'How were you on May ${ref.watch(selectedDayProvider)}?',
+                    style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 15),
+
                   // Mood selector 5 colors
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -82,10 +85,14 @@ class HomeScreen extends ConsumerWidget {
                         MoodType.values.map((mood) {
                           return GestureDetector(
                             onTap: () {
-                              // สมมติว่าวันนี้เป็นวันที่ 4
-                              const int today = 4;
-                              // Update mood of today direct to Riverpod
-                              ref.read(moodProvider.notifier).updateMood(today, mood); 
+                              // Pull the selected date from Riverpod
+                              final int targetDay = ref.read(
+                                selectedDayProvider,
+                              );
+                              // Update mood to the day
+                              ref
+                                  .read(moodProvider.notifier)
+                                  .updateMood(targetDay, mood);
                             },
                             child: Container(
                               width: 50,

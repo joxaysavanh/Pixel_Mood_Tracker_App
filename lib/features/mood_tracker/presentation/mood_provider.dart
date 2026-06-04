@@ -12,6 +12,12 @@ class MoodNotifier extends StateNotifier<Map<int, MoodType>> {
 }
 
 // Declear Provider valiable for useable in whole app
-final moodProvider = StateNotifierProvider<MoodNotifier, Map<int, MoodType>>((ref) {
+final moodProvider = StateNotifierProvider<MoodNotifier, Map<int, MoodType>>((
+  ref,
+) {
   return MoodNotifier();
+});
+
+final selectedDayProvider = StateProvider<int>((ref) {
+  return DateTime.now().day;
 });

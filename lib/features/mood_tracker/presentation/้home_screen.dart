@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pixel_mood_tracker/core/constants/app_colors.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/data/mock_mood_data.dart';
+import 'package:pixel_mood_tracker/features/mood_tracker/presentation/mood_provider.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/presentation/widgets/mood_pixel_widget.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Map<int, MoodType> monthlyMoods = ref.watch(moodProvider);
+
     return Scaffold(
       backgroundColor: AppColors.backgroud,
       body: Center(
@@ -51,8 +55,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                       itemBuilder: (context, index) {
                         final day = index + 1;
-                        final MoodType? dayMood =
-                            MockMoodData.monthlyMoods[day];
+                        final MoodType? dayMood = monthlyMoods[day];
 
                         return MoodPixelWidget(day: day, mood: dayMood);
                       },
@@ -72,30 +75,37 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 15),
+                  // Mood selector 5 colors
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: MoodType.values.map((mood) {
-                      return GestureDetector(
-                        onTap: () {
-                          print('You selected: ${mood.name}');
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.getColorForMood(mood),
-                            shape: BoxShape.circle,
-                            boxShadow:[
-                              BoxShadow(
-                                color: AppColors.getColorForMood(mood).withOpacity(0.3),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              )
-                            ]
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                    children:
+                        MoodType.values.map((mood) {
+                          return GestureDetector(
+                            onTap: () {
+                              // สมมติว่าวันนี้เป็นวันที่ 4
+                              const int today = 4;
+                              // Update mood of today direct to Riverpod
+                              ref.read(moodProvider.notifier).updateMood(today, mood); 
+                            },
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.getColorForMood(mood),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.getColorForMood(
+                                      mood,
+                                    ).withOpacity(0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
                   ),
                   const SizedBox(height: 10),
                 ],

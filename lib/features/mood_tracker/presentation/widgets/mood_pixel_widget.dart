@@ -21,10 +21,14 @@ class MoodPixelWidget extends ConsumerWidget {
       onTap: () {
         ref.read(selectedDayProvider.notifier).state = day;
       },
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: isSelected ? const EdgeInsets.all(0) : const EdgeInsets.all(2),
+
         decoration: BoxDecoration(
           color: pixelColor,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(6),
           border:
               isSelected
                   ? Border.all(color: AppColors.textPrimary, width: 2.5)

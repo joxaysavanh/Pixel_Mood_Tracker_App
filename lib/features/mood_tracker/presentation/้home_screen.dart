@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pixel_mood_tracker/core/constants/app_colors.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/data/mock_mood_data.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/presentation/mood_provider.dart';
+import 'package:pixel_mood_tracker/features/mood_tracker/presentation/widgets/mood_analytics_widget.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/presentation/widgets/mood_pixel_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -114,6 +115,19 @@ class HomeScreen extends ConsumerWidget {
                           );
                         }).toList(),
                   ),
+                  const SizedBox(height:25),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Monthly Overview',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height:15),
+                  MoodAnalyticsWidget(monthlyMoods: monthlyMoods),
                   const SizedBox(height: 10),
                 ],
               ),

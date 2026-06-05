@@ -45,6 +45,28 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children:
+                        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((
+                          dayName,
+                        ) {
+                          return SizedBox(
+                            width: 40,
+                            child: Text(
+                              dayName,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary.withOpacity(0.4),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                  const SizedBox(height: 10),
+
                   Expanded(
                     child: GridView.builder(
                       itemCount: 31,
@@ -115,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
                           );
                         }).toList(),
                   ),
-                  const SizedBox(height:25),
+                  const SizedBox(height: 25),
                   const Divider(),
                   const SizedBox(height: 10),
                   const Text(
@@ -126,7 +148,7 @@ class HomeScreen extends ConsumerWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height:15),
+                  const SizedBox(height: 15),
                   MoodAnalyticsWidget(monthlyMoods: monthlyMoods),
                   const SizedBox(height: 10),
                 ],

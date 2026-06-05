@@ -6,6 +6,9 @@ import 'package:pixel_mood_tracker/features/mood_tracker/presentation/mood_provi
 import 'package:pixel_mood_tracker/features/mood_tracker/presentation/widgets/mood_analytics_widget.dart';
 import 'package:pixel_mood_tracker/features/mood_tracker/presentation/widgets/mood_pixel_widget.dart';
 
+const int monthOffset = 5;
+const int daysInMonth = 31;
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -69,7 +72,7 @@ class HomeScreen extends ConsumerWidget {
 
                   Expanded(
                     child: GridView.builder(
-                      itemCount: 31,
+                      itemCount: daysInMonth + monthOffset,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 7,
@@ -77,7 +80,11 @@ class HomeScreen extends ConsumerWidget {
                             mainAxisSpacing: 8,
                           ),
                       itemBuilder: (context, index) {
-                        final day = index + 1;
+                        if (index < monthOffset) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final int day = index - monthOffset + 1;
                         final MoodType? dayMood = monthlyMoods[day];
 
                         return MoodPixelWidget(day: day, mood: dayMood);

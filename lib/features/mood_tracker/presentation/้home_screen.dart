@@ -146,12 +146,13 @@ class HomeScreen extends ConsumerWidget {
                     TextField(
                       controller: noteController,
                       maxLines: 2, // ให้พิมพ์ยาวได้ 2 บรรทัดพอดีงาม
-                      maxLength: 60, // จำกัดคำสั้นๆ คลีนๆ แบบ Micro-note ไม่ให้ยาวรกรุงรัง
+                      maxLength: 100, // จำกัดคำสั้นๆ คลีนๆ แบบ Micro-note ไม่ให้ยาวรกรุงรัง
                       decoration: InputDecoration(
                         hintText: 'Write a short note about today...',
                         hintStyle: TextStyle(color: AppColors.textPrimary.withOpacity(0.3), fontSize: 13),
                         filled: true,
-                        fillColor: AppColors.backgroud.withOpacity(0.3),
+                        fillColor: AppColors.backgroud.withOpacity(0.5),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,

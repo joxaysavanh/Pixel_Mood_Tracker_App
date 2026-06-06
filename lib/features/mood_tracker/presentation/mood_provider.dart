@@ -66,3 +66,20 @@ final moodProvider = StateNotifierProvider<MoodNotifier, Map<int, DayRecord>>((
 final selectedDayProvider = StateProvider<int>((ref) {
   return DateTime.now().day;
 });
+
+class ThemeNotifier extends StateNotifier<AppThemeType> {
+  final _box = Hive.box('mood_box');
+
+  ThemeNotifier() : super(AppThemeType.cottonCandy) {
+    final String? savedTheme = _box.get('app_theme');
+    if (savedTheme != null) {
+      state = AppThemeType.values.byName(savedTheme);
+    }
+  }
+
+  final themeProvider = StateNotifierProvider<ThemeNotifier, AppThemeType>((
+    ref,
+  ) {
+    return ThemeNotifier();
+  });
+}

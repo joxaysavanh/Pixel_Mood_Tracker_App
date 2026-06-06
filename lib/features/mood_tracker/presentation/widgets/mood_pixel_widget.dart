@@ -15,7 +15,7 @@ class MoodPixelWidget extends ConsumerWidget {
     final bool isSelected = selectedDay == day;
 
     final Color pixelColor =
-        mood != null ? AppColors.getColorForMood(mood!) : Colors.black12;
+        mood != null ? AppColors.getColorForMood(mood!) : const Color(0xFFF0F2F5);
 
     return GestureDetector(
       onTap: () {
@@ -28,10 +28,10 @@ class MoodPixelWidget extends ConsumerWidget {
 
         decoration: BoxDecoration(
           color: pixelColor,
-          borderRadius: BorderRadius.circular(6),
+          shape: BoxShape.circle,
           border:
               isSelected
-                  ? Border.all(color: AppColors.textPrimary, width: 2.5)
+                  ? Border.all(color: Colors.black26, width: 2.0)
                   : null,
         ),
         child: Center(
@@ -41,7 +41,7 @@ class MoodPixelWidget extends ConsumerWidget {
               color:
                   mood != null
                       ? Colors.white
-                      : AppColors.textPrimary.withOpacity(0.4),
+                      : Colors.black26,
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),

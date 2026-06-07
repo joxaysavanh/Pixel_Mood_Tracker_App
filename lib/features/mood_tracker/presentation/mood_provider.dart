@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:pixel_mood_tracker/core/constants/app_colors.dart';
 
+// โมเดลข้อมูลคู่สำหรับ 1 วัน
 class DayRecord {
   final MoodType mood;
   final String note;
@@ -9,27 +10,25 @@ class DayRecord {
   DayRecord({required this.mood, required this.note});
 }
 
-// StateNotifier, Define State is Map<int, Moodtype> (key is day, value is mood)
-class MoodNotifier extends StateNotifier<Map<int, DayRecord>> {
-  // use Hive box
+// ตัวจัดการข้อมูลอารมณ์และโน้ตบันทึกรูปแบบคีย์ String (yyyy-MM-dd)
+class MoodNotifier extends StateNotifier<Map<String, DayRecord>> {
   final _box = Hive.box('mood_box');
 
-  // When create MoodNotifier, go to download the old data immediately
   MoodNotifier() : super({}) {
     _loadDataFromHive();
   }
 
-  // Load old data from database function
   void _loadDataFromHive() {
-    final Map<int, DayRecord> loadedData = {};
+    final Map<String, DayRecord> loadedData = {};
     for (var key in _box.keys) {
-      if (key is int) {
-        // Hive จะเก็บข้อมูลแยกกัน: 'mood_4' เก็บสี, 'note_4' เก็บบันทึก
-        final String? moodName = _box.get('mood_$key');
-        final String note = _box.get('note_$key') ?? '';
+      if (key is String && key.startsWith('mood_')) {
+        final String dateKey = key.replaceFirst('mood_', '');
+        
+        final String? moodName = _box.get('mood_$dateKey');
+        final String note = _box.get('note_$dateKey') ?? '';
 
         if (moodName != null) {
-          loadedData[key] = DayRecord(
+          loadedData[dateKey] = DayRecord(
             mood: MoodType.values.byName(moodName),
             note: note,
           );
@@ -39,34 +38,39 @@ class MoodNotifier extends StateNotifier<Map<int, DayRecord>> {
     state = loadedData;
   }
 
-  void updateMood(int day, MoodType mood) {
-    final currentNote = state[day]?.note ?? '';
-    _box.put('mood_$day', mood.name);
+  void updateMood(String dateKey, MoodType mood) {
+    final currentNote = state[dateKey]?.note ?? '';
+    _box.put('mood_$dateKey', mood.name);
 
-    state = {...state, day: DayRecord(mood: mood, note: currentNote)};
+    state = {...state, dateKey: DayRecord(mood: mood, note: currentNote)};
   }
 
-  void updateNote(int day, String note) {
-    final currentMood = state[day]?.mood;
-    _box.put('note_$day', note);
-
+  void updateNote(String dateKey, String note) {
+    final currentMood = state[dateKey]?.mood;
+    
     if (currentMood != null) {
-      state = {...state, day: DayRecord(mood: currentMood, note: note)};
+      _box.put('note_$dateKey', note);
+      state = {...state, dateKey: DayRecord(mood: currentMood, note: note)};
     }
   }
 }
 
-// Declear Provider valiable for useable in whole app
-final moodProvider = StateNotifierProvider<MoodNotifier, Map<int, DayRecord>>((
-  ref,
-) {
+// จดทะเบียน Provider ใช้งานภาพรวม
+final moodProvider = StateNotifierProvider<MoodNotifier, Map<String, DayRecord>>((ref) {
   return MoodNotifier();
 });
 
-final selectedDayProvider = StateProvider<int>((ref) {
-  return DateTime.now().day;
+// ตัวคุมสถานะ "เดือนและปี" ที่กำลังเปิดดูบนปฏิทิน
+final currentCalendarMonthProvider = StateProvider<DateTime>((ref) {
+  return DateTime.now();
 });
 
+// ตัวคุมสถานะ "วันที่ผู้ใช้จิ้มเลือกอยู่" (เก็บเป็นรูปแบบ DateTime)
+final selectedDateTimeProvider = StateProvider<DateTime>((ref) {
+  return DateTime.now();
+});
+
+// ตัวแจ้งสลับและเซฟบันทึกธีมพาสเทลลงความจำเครื่อง
 class ThemeNotifier extends StateNotifier<AppThemeType> {
   final _box = Hive.box('mood_box');
 
@@ -77,9 +81,12 @@ class ThemeNotifier extends StateNotifier<AppThemeType> {
     }
   }
 
-  final themeProvider = StateNotifierProvider<ThemeNotifier, AppThemeType>((
-    ref,
-  ) {
-    return ThemeNotifier();
-  });
+  void changeTheme(AppThemeType newTheme) {
+    _box.put('app_theme', newTheme.name);
+    state = newTheme;
+  }
 }
+
+final themeProvider = StateNotifierProvider<ThemeNotifier, AppThemeType>((ref) {
+  return ThemeNotifier();
+});

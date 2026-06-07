@@ -1,49 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pixel_mood_tracker/features/mood_tracker/presentation/mood_provider.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../mood_provider.dart';
 
 class MoodPixelWidget extends ConsumerWidget {
-  final int day;
+  final DateTime date;
   final MoodType? mood;
 
-  const MoodPixelWidget({super.key, required this.day, this.mood});
+  const MoodPixelWidget({
+    super.key,
+    required this.date,
+    this.mood,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final int selectedDay = ref.watch(selectedDayProvider);
-    final bool isSelected = selectedDay == day;
+    final DateTime selectedDateTime = ref.watch(selectedDateTimeProvider);
+    final AppThemeType currentTheme = ref.watch(themeProvider);
+    
+    // ไฮไลท์เส้นขอบถ้าระบุ ปี เดือน วัน ตรงกันเป๊ะๆ
+    final bool isSelected = selectedDateTime.year == date.year &&
+        selectedDateTime.month == date.month &&
+        selectedDateTime.day == date.day;
 
-    final Color pixelColor =
-        mood != null ? AppColors.getColorForMood(mood!) : const Color(0xFFF0F2F5);
+    final Color pixelColor = mood != null 
+        ? AppColors.getColorForMood(mood!, currentTheme) 
+        : const Color(0xFFF0F2F5); // เทาพาสเทลอ่อนจาง สบายตาสำหรับวันว่างเปล่า
 
     return GestureDetector(
       onTap: () {
-        ref.read(selectedDayProvider.notifier).state = day;
+        ref.read(selectedDateTimeProvider.notifier).state = date;
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         margin: isSelected ? const EdgeInsets.all(0) : const EdgeInsets.all(2),
-
         decoration: BoxDecoration(
           color: pixelColor,
-          shape: BoxShape.circle,
-          border:
-              isSelected
-                  ? Border.all(color: Colors.black26, width: 2.0)
-                  : null,
+          shape: BoxShape.circle, // รูปทรงวงกลม Aesthetic อ่อนโยน
+          border: isSelected 
+              ? Border.all(color: Colors.black26, width: 2.0)
+              : null,
         ),
         child: Center(
           child: Text(
-            '$day',
+            '${date.day}',
             style: TextStyle(
-              color:
-                  mood != null
-                      ? Colors.white
-                      : Colors.black26,
+              color: mood != null ? Colors.white : Colors.black26,
               fontSize: 12,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

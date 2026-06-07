@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pixel_mood_tracker/core/constants/app_colors.dart';
+import 'package:pixel_mood_tracker/features/mood_tracker/presentation/mood_provider.dart';
 
-class MoodAnalyticsWidget extends StatelessWidget {
+class MoodAnalyticsWidget extends ConsumerWidget {
   final Map<int, MoodType> monthlyMoods;
 
   const MoodAnalyticsWidget({super.key, required this.monthlyMoods});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contex, WidgetRef ref) {
+    final AppThemeType currentTheme = ref.watch(themeProvider);
+
     // check that the user has save any color mood on this month
     if (monthlyMoods.isEmpty) {
       return Text(
@@ -53,7 +57,7 @@ class MoodAnalyticsWidget extends StatelessWidget {
                         '${(percentage * 100).toStringAsFixed(0)}% ($count days)',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textPrimary.withOpacity(0.6)
+                          color: AppColors.textPrimary.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -76,7 +80,7 @@ class MoodAnalyticsWidget extends StatelessWidget {
                         child: Container(
                           height: 8,
                           decoration: BoxDecoration(
-                            color: AppColors.getColorForMood(mood),
+                            color: AppColors.getColorForMood(mood, currentTheme).withOpacity(0.4),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
